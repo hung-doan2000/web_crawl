@@ -1,0 +1,21 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<script type="text/javascript">
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+    });
+
+    Toast.fire({
+        type: ' {{ category }}',
+        icon: '{{ category }}',
+        title: '{{ message }}'
+    })
+</script>
+{% endfor %}
+{% endif %}
+{% endwith %}
+

@@ -1,0 +1,160 @@
+{% extends 'index.html' %}
+
+{% block title %} <title>Quản lý tool</title> {% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+  href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+  href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark" style="font-weight: 400">Quản lý tool</h1>
+      </div>
+      </div>
+    </div>
+</div>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Danh sách tool</h3>
+            <a href="{{ url_for('tool.createTool') }}" class="btn btn-info p-1 float-right">Thêm mới</a>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="tool-table" class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Tên Tool</th>
+                  <th>Cửa hàng</th>
+                  <th>Danh mục</th>
+                  <th>Đường dẫn</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename = 'AdminLTE/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script
+  src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script
+  src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script
+  src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script>
+  $(document).ready(function () {
+    $('.loading').show()
+    $('body').css('opacity', 0.5)
+    $.ajax({
+      url: 'tool/list',
+      dataType: 'json',
+      success: function (data) {
+        var table = $("#tool-table").DataTable({
+          processing: true,
+          serverSide: false,
+          scrollX: true,
+          autoWidth: false,
+          ajax: {
+            'url': 'tool/list'
+          },
+          orderCellsTop: true,
+          order: [[0, "desc"]],
+          columns: [
+            { "data": "id", 'width': '10px', 'searchable': false },
+            { "data": "name", 'orderable': false },
+            { "data": "store", 'width': '150px', 'orderable': false },
+            { "data": "category", 'width': '150px', 'orderable': false },
+            { "data": "link", 'orderable': false },
+            { "data": "action", 'width': '130px', 'orderable': false },
+          ],
+        });
+        $('body').css('opacity', 1)
+        $('.loading').hide()
+      },
+      error: function () {
+        var body = "<tbody> <tr>"
+        body += "<td colspan='7' class='text-center'>" + "No data availdables." + "</td>"
+        body += "</tr> </tbody>"
+        $('#product-table').append(body)
+        $('body').css('opacity', 1)
+        $('.loading').hide()
+      }
+    });
+
+    $(document).on('click', '.tool-destroy', function (e) {
+      e.preventDefault();
+      var id = $(this).attr('id');
+      Swal.fire({
+        title: 'Xóa tool này?',
+        text: "Bạn không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Vẫn xóa!',
+      })
+        .then((result) => {
+          if (result.value) {
+            $.post("/tool/delete", { id: id }, function (data) {
+              console.log(data);
+              window.location = "/tool"
+            })
+          }
+        });
+    });
+
+    $(document).on('click', '.tool-crawl', function (e) {
+      e.preventDefault();
+      $('.loading').show()
+      $('body').css('opacity', 0.5)
+      var id = $(this).attr('id');
+      console.log(id);
+      $.ajax({
+        url: '/crawl/' + id,
+        dataType: 'json',
+        success: function (data) {
+          window.location = '/crawl'
+          $('body').css('opacity', 1)
+          $('.loading').hide()
+        },
+        error: function (res) {
+          setTimeout(function () {
+            $('body').css('opacity', 1)
+            $('.loading').hide()
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+            });
+
+            Toast.fire({
+              type: 'error',
+              icon: 'error',
+              title: res.responseJSON['msg']
+            })
+          }, 3000)
+        }
+      });
+    });
+  })
+</script>
+{% endblock %}

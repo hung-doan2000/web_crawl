@@ -1,0 +1,159 @@
+{% extends 'index.html' %}
+
+{% block title %} Quản lý crawl {% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename = 'plugins/Select-1.3.1/css/select.bootstrap4.min.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark" style="font-weight: 400">Cập nhật job</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid ">
+        <form action="" method="post" class="row">
+            {{ form.csrf_token() }}
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin job</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                {{ form.name.label }} <span class="text-red">*</span>
+                                {{ form.name(class="form-control", id = "name", placeholder="Nhập tên job", maxlength="255", value=data["job"][1]) }}
+                                {% if form.name.errors %}
+                                {% for error in form.name.errors %}
+                                <div id="" class="error invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                <script>
+                                    var elem = document.querySelector("#name");
+                                    elem.setAttribute("class", "form-control is-invalid")
+                                </script>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-5">
+                                <label for="tool_name">Chọn tool <span class="text-red">*</span></label>
+                                <select name="tools" class="form-control select2 select2-info"
+                                    data-dropdown-css-class="select2-info" style="width: 100%;">
+                                    {% for tool in data["tools"] %}
+                                    <option value="{{ tool.0 }}" {% if tool.0 == data["tool_id"] %} selected {% endif %}>{{tool.1}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <label for="id_end_time">Ngày bắt đầu</label>
+                                <div class="input-group date" id="start_date">
+                                    <input type="text" name="start_date" value="{{ data["start_date"] }}" class="form-control" required/>
+                                    <div class="input-group-addon input-group-append">
+                                        <div class="input-group-text">
+                                            <i class="glyphicon glyphicon-calendar fas fa-calendar-alt"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-5">
+                                {{ form.time.label }} <span class="text-red">*</span>
+                                {{ form.time(class="form-control", id = "time" ,placeholder="Nhập số ngày", maxlength="255", value=data["job"][4]) }}
+                                {% if form.time.errors%}
+                                <div id="" class="error invalid-feedback d-block">
+                                    {{ form.time.errors[0] }}
+                                </div>
+                                <script>
+                                    var elem = document.querySelector("#time");
+                                    elem.setAttribute("class", "form-control is-invalid")
+                                </script>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label mr-2 d-block" name="is_active" for="">Kích hoạt</label>
+                            <input class=""
+                            name="is_active"
+                            type="checkbox"
+                            {% if data["job"][5] == 1 %}
+                                checked
+                            {% endif %}
+                            data-bootstrap-switch
+                            data-off-color="danger"
+                            data-on-color="success">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thao tác</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-set">
+                            <button type="submit" name="submit" value="apply" class="btn btn-success">
+                                <i class="fa fa-check-circle"></i> Lưu &amp; Thoát
+                            </button>
+
+                            <button type="button" name="back" id="back" value="apply" class="btn btn-warning">
+                                <i class="fas fa-arrow-circle-left"></i> Thoát
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#start_date').datetimepicker({
+            "allowInputToggle": true,
+            "showClose": true,
+            "showClear": true,
+            "showTodayButton": true,
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "icons": {
+                today: "far fa-calendar-check",
+                time:  "far fa-clock",
+                clear: "far fa-trash-alt",
+                date: "fas fa-calendar-alt",
+            }
+        });
+
+        $('#back').click(function () {
+            window.location = '/job'
+        });
+    });
+</script>
+{% endblock %}

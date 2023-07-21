@@ -1,0 +1,186 @@
+{% extends 'index.html' %}
+
+{% block title %} Quản lý crawl {% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename = 'plugins/Select-1.3.1/css/select.bootstrap4.min.css')}}">
+<style>
+    .detail-product img{
+        width: 100%;
+    }
+    .detail-product span{
+        text-align: left;
+    }
+    .checked {
+        color: orange;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark" style="font-weight: 400">Chi tiết sản phẩm</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid ">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin sản phẩm</h3>
+                        <div class="btn-set float-right">
+                            <button type="button" name="back" id="back" value="apply" class="btn btn-warning">
+                                <i class="fas fa-arrow-circle-left"></i> Thoát
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-7">
+                                <label for="product_name">Tên sản phẩm</label>
+                                <input name="product_name" type="text" class="form-control" id="product_name"
+                                    value="{{ product['title'] }}" disabled>
+                            </div>
+                            <div class="col-md-1"></div>
+                            {% if product['img'] %}
+                                <div class="form-group col-md-3">
+                                    <img src="{{ product['img'] }}" style="width: 100px; height: 100px">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="product_price">Giá</label>
+                                <input name="product_price" class="form-control" type="text" disabled
+                                    value="{{ product['price'] }}" style="font-size: 17px"></input>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-3">
+                                <label for="product_cate">Danh mục</label>
+                                <input name="product_cate" class="form-control" type="text" disabled
+                                    value="{{ cate[1] }}"></input>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-3">
+                                <label for="product_store">Cửa hàng</label>
+                                <input name="product_store" class="form-control" type="text" disabled
+                                    value="{{ store[1] }}"></input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-7">
+                                <label for="product_link">Đường dẫn</label>
+                                <div>
+                                    <a href="{{ product['link'] }}">{{ product['link'] }}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            {% if product['rating'] and product['rating'] != "0"  %}
+                                <div class="form-group col-md-3">
+                                    <label for="product_link">Đánh giá</label>
+                                    <div class="rating" id="{{ product['rating'] }}">
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mô tả</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if product['description'] %}
+                        <div class="detail-product">
+                            {{ product['description']|safe }}
+                        </div>
+                        {% else %}
+                        <span>Không có dữ liệu.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông số kĩ thuật</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if product['specifications'] %}
+                        <table id="product-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%">Thông số</th>
+                                    <th>Giá trị</th>
+                                </tr>
+                            </thead>             
+                            <tbody>
+                                {% for key, value in specifications.items() %}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td>{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <tr>
+                            <td colspan="2">Không có dữ liệu.</td>
+                        </tr>
+                        {% endif %}
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#back').click(function () {
+            window.history.back();
+        });
+
+    $('.fa-star').each(function(index, elem) {
+        elem.setAttribute('class', 'fa fa-star checked')
+        count = $('.rating').attr('id')
+        console.log(count);
+        if (index + 1 == Math.round(count)) {
+            return false;
+        }
+    })
+    });
+</script>
+{% endblock %}

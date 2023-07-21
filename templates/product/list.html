@@ -1,0 +1,134 @@
+{% extends 'index.html' %}
+
+{% block title %} Quản lý crawl {% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename = 'plugins/Select-1.3.1/css/select.bootstrap4.min.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark" style="font-weight: 400">Crawl dữ liệu</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách sản phẩm</h3>
+                        <button type="button" name="save" id="product_save" class="btn btn-info p-1 float-right">Lưu dữ
+                            liệu</button>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="product-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Ảnh</th>
+                                    <th>Giá</th>
+                                    <th>Cửa hàng</th>
+                                    <th>Danh mục</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename = 'AdminLTE/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: 'crawl/list_product',
+            dataType: 'json',
+            success: function (data) {
+                var table = $("#product-table").DataTable({
+                    processing: true,
+                    serverSide: false,
+                    scrollX: true,
+                    autoWidth: false,
+                    ajax: {
+                        'url': 'crawl/list_product'
+                    },
+                    orderCellsTop: true,
+                    order: [[0, "asc"]],
+                    columns: [
+                        { "data": "id", 'width': '10px', 'searchable': false },
+                        { "data": "name", 'orderable': false },
+                        { "data": "image", 'width': '90px' },
+                        { "data": "price", 'width': '110px' },
+                        { "data": "store", 'width': '150px', 'orderable': false },
+                        { "data": "category", 'width': '150px', 'orderable': false },
+                        { "data": "action", 'width': '50px', 'orderable': false },
+                    ],
+                });
+            },
+            error: function () {
+                var body = "<tbody> <tr>"
+                body += "<td colspan='7' class='text-center'>" + "No data availdables." + "</td>"
+                body += "</tr> </tbody>"
+                $('#product-table').append(body)
+            }
+        });
+
+        $(document).on('click', '#product_save', function (e) {
+            e.preventDefault();
+            $('.loading').show()
+            $('body').css('opacity', 0.5)
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+            });
+            $.ajax({
+                url: '/crawl/save',
+                dataType: 'json',
+                success: function (data) {
+                    $('body').css('opacity', 1)
+                    $('.loading').hide()
+                    Toast.fire({
+                        type: 'success',
+                        icon: 'success',
+                        title: data.msg
+                    })
+                },
+                error: function (res) {
+                    $('body').css('opacity', 1)
+                    $('.loading').hide()
+                    Toast.fire({
+                        type: 'error',
+                        icon: 'error',
+                        title: res.responseJSON['msg']
+                    })
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

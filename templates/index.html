@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+{% include "partials/head.html" %}
+{% block css %}{% endblock %}
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+    <div class="loading" style="display: none;"><div></div><div></div><div></div><div></div></div>
+    <div class="wrapper">
+        {% include "partials/nav.html" %}
+        {% include "partials/sidebar.html" %}
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}      
+                </div> 
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        {% include "partials/footer.html" %}
+    </div>
+    {% include "partials/scripts.html" %}
+    {% block scripts %}{% endblock %}
+
+    {% include "partials/alert.html" %}
+    <!-- ./wrapper -->
+</body>
+</html>

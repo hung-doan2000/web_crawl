@@ -1,0 +1,425 @@
+{% extends 'index.html' %}
+
+{% block title %} Quản lý crawl {% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename = 'plugins/Select-1.3.1/css/select.bootstrap4.min.css')}}">
+{% endblock %}
+
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark" style="font-weight: 400">Chỉnh sửa tool</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid ">
+        <form action="" method="post" class="row">
+            {{ form.csrf_token() }}
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin tool</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                {{ form.name.label }} <span class="text-red">*</span>
+                                {{ form.name(class="form-control", id = "name" ,placeholder="Nhập tên tool", maxlength="255", value=data["tool"][1] ) }}
+                                {% if form.name.errors %}
+                                {% for error in form.name.errors %}
+                                <div id="" class="error invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                <script>
+                                    var elem = document.querySelector("#name");
+                                    elem.setAttribute("class", "form-control is-invalid")
+                                </script>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-4">
+                                <label for="store_name">Cửa hàng <span class="text-red">*</span></label>
+                                <select name="stores" class="form-control select2 select2-info"
+                                    data-dropdown-css-class="select2-info" style="width: 100%;">
+                                    {% for store in data["stores"] %}
+                                    <option value="{{ store.0 }}" {% if store.0==data["store_id"] %} selected {% endif
+                                        %}>{{store.1}}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                {{ form.link.label }} <span class="text-red">*</span>
+                                {{ form.link(class="form-control", id = "toollink" ,placeholder="Nhập đường dẫn",
+                                maxlength="255", value=data["tool"][2]) }}
+                                {% if form.link.errors %}
+                                {% for error in form.link.errors %}
+                                <div id="" class="error invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                <script>
+                                    var elem = document.querySelector("#toollink");
+                                    elem.setAttribute("class", "form-control is-invalid")
+                                </script>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="form-group col-md-4">
+                                <label for="cate_name">Danh mục <span class="text-red">*</span></label>
+                                <select name="categories" class="form-control select2 select2-info"
+                                    data-dropdown-css-class="select2-info" style="width: 100%;">
+                                    {% for cate in data["categories"] %}
+                                    <option value="{{ cate.0 }} " {% if cate.0==data["category_id"] %} selected {% endif
+                                        %}>{{cate.1}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin selector</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        {% if data["selector_msg"] %}
+                        <div style="margin-bottom: 15px;">
+                            <div id="" class="error invalid-feedback d-block">
+                                {{ data["selector_msg"] }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="selector">
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_item %}
+                                    {{ form.selector_item.label }} <span class="text-red">*</span>
+                                    {{ form.selector_item(class="form-control", id = "selector_item" ,placeholder="...",
+                                    maxlength="255", value=data["selector"]["selector_item"]) }}
+                                    {% if form.selector_item.errors %}
+                                    {% for error in form.selector_item.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_item");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_item">Selector Khung <span class="text-red">*</span></label>
+                                    <input name="selector_item" id="selector_item" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_title %}
+                                    {{ form.selector_title.label }} <span class="text-red">*</span>
+                                    {{ form.selector_title(class="form-control", id = "selector_title"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_title"]) }}
+                                    {% if form.selector_title.errors %}
+                                    {% for error in form.selector_title.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_title");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_title">Selector Tên <span class="text-red">*</span></label>
+                                    <input name="selector_title" id="selector_title" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_price %}
+                                    {{ form.selector_price.label }} <span class="text-red">*</span>
+                                    {{ form.selector_price(class="form-control", id = "selector_price"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_price"]) }}
+                                    {% if form.selector_price.errors %}
+                                    {% for error in form.selector_price.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_price");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_price">Selector Giá <span class="text-red">*</span></label>
+                                    <input name="selector_price" id="selector_price" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_image %}
+                                    {{ form.selector_image.label }} <span class="text-red">*</span>
+                                    {{ form.selector_image(class="form-control", id = "selector_image"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_image"]) }}
+                                    {% if form.selector_image.errors %}
+                                    {% for error in form.selector_image.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_image");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_image">Selector Ảnh <span class="text-red">*</span></label>
+                                    <input name="selector_image" id="selector_image" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_link %}
+                                    {{ form.selector_link.label }} <span class="text-red">*</span>
+                                    {{ form.selector_link(class="form-control", id = "selector_link" ,placeholder="...",
+                                    maxlength="255", value=data["selector"]["selector_link"]) }}
+                                    {% if form.selector_link.errors %}
+                                    {% for error in form.selector_link.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_link");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_link">Selector ĐƯờng dẫn <span
+                                            class="text-red">*</span></label>
+                                    <input name="selector_link" id="selector_link" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_detail_link %}
+                                    {{ form.selector_detail_link.label }}
+                                    {{ form.selector_detail_link(class="form-control", id = "selector_detail_link"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_detail_link"]) }}
+                                    {% if form.selector_detail_link.errors %}
+                                    {% for error in form.selector_detail_link.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_detail_link");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_detail_link">Selector Đường dẫn con</label>
+                                    <input name="selector_detail_link" id="selector_detail_link" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-5">
+                                    {% if form.selector_button %}
+                                    {{ form.selector_button.label }}
+                                    {{ form.selector_button(class="form-control", id = "selector_button"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_load_button"]) }}
+                                    {% if form.selector_button.errors %}
+                                    {% for error in form.selector_button.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_button");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_button">Selector Load Button </label>
+                                    <input name="selector_button" id="selector_button" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <h4>Chi tiết sản phẩm</h4><br>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    {% if form.selector_detail %}
+                                    {{ form.selector_detail.label }} <span class="text-red">*</span>
+                                    {{ form.selector_detail(class="form-control", id = "selector_detail"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_detail"]) }}
+                                    {% if form.selector_detail.errors %}
+                                    {% for error in form.selector_detail.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_detail");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_detail">Selector Khung Thông Số <span
+                                            class="text-red">*</span></label>
+                                    <input name="selector_detail" id="selector_detail" type="text" class="form-control"
+                                        placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-md-4">
+                                    {% if form.selector_detail_title %}
+                                    {{ form.selector_detail_title.label }} <span class="text-red">*</span>
+                                    {{ form.selector_detail_title(class="form-control", id = "selector_detail_title"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_detail_title"]) }}
+                                    {% if form.selector_detail_title.errors %}
+                                    {% for error in form.selector_detail_title.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_detail_title");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_detail_title">Selector Tên Thông Số <span
+                                            class="text-red">*</span></label>
+                                    <input name="selector_detail_title" id="selector_detail_title" type="text"
+                                        class="form-control" placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-md-4">
+                                    {% if form.selector_detail_value %}
+                                    {{ form.selector_detail_value.label }} <span class="text-red">*</span>
+                                    {{ form.selector_detail_value(class="form-control", id = "selector_detail_value"
+                                    ,placeholder="...", maxlength="255", value=data["selector"]["selector_detail_value"]) }}
+                                    {% if form.selector_detail_value.errors %}
+                                    {% for error in form.selector_detail_value.errors %}
+                                    <div id="" class="error invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    <script>
+                                        var elem = document.querySelector("#selector_detail_value");
+                                        elem.setAttribute("class", "form-control is-invalid")
+                                    </script>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% else %}
+                                    <label for="selector_detail_value">Selector Chi Tiết <span
+                                            class="text-red">*</span></label>
+                                    <input name="selector_detail_value" id="selector_detail_value" type="text"
+                                        class="form-control" placeholder="..." value="" maxlength="255">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label for="selector_detail_btn">Selector Show Button </label>
+                                    <input name="selector_detail_btn" id="selector_detail_btn" type="text"
+                                    class="form-control" placeholder="..." value="{{ data["selector"]["selector_detail_btn"] }}" maxlength="255">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="selector_detail_des">Selector Mô Tả </label>
+                                    <input name="selector_detail_des" id="selector_detail_des" type="text"
+                                        class="form-control" placeholder="..." value="{{ data["selector"]["selector_detail_des"] }}" maxlength="255">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="selector_detail_rating">Selector Đánh Giá</label>
+                                    <input name="selector_detail_rating" id="selector_detail_rating" type="text"
+                                        class="form-control" placeholder="..." value="{{ data["selector"]["selector_detail_rating"] }}" maxlength="255">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thao tác</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                    class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-set">
+                            <button type="submit" name="submit" value="apply" class="btn btn-success">
+                                <i class="fa fa-check-circle"></i> Lưu &amp; Thoát
+                            </button>
+
+                            <button type="button" name="back" id="back" value="apply" class="btn btn-warning">
+                                <i class="fas fa-arrow-circle-left"></i> Thoát
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#flexCheckDefault').click(function () {
+            if ($('#flexCheckDefault').is(":checked")) {
+                $('.selector').hide();
+            }
+            else {
+                $('.selector').show();
+                console.log(selector_check);
+            }
+        });
+
+        $('#back').click(function () {
+            window.location = '/tool'
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'index.html' %}
+
+{% block css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+    href="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename = 'plugins/Select-1.3.1/css/select.bootstrap4.min.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark" style="font-weight: 400">Cài đặt tool tự động</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Danh sách job</h3>
+                        <a href="/job/create" class="btn btn-info p-1 float-right">Thêm mới job</a>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="job-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Tên job</th>
+                                    <th>Tên tool</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Thời gian</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename = 'AdminLTE/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script
+    src="{{url_for('static', filename = 'AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: 'job/list',
+            dataType: 'json',
+            success: function (data) {
+                var table = $("#job-table").DataTable({
+                    processing: true,
+                    serverSide: false,
+                    scrollX: true,
+                    autoWidth: false,
+                    ajax: {
+                        'url': 'job/list'
+                    },
+                    orderCellsTop: true,
+                    order: [[0, "asc"]],
+                    columns: [
+                        { "data": "id", 'width': '10px' },
+                        { "data": "name", 'orderable': false, 'width': '120px' },
+                        { "data": "tool", 'orderable': false },
+                        { "data": "start_time", 'orderable': false },
+                        { "data": "time", 'width': '100px', 'orderable': false },
+                        { "data": "status", 'width': '140px', 'orderable': false },
+                        { "data": "action", 'width': '100px', 'orderable': false },
+                    ],
+                });
+            },
+            error: function () {
+                console.log(123);
+                var body = "<tbody> <tr>"
+                body += "<td colspan='7' class='text-center'>" + "No data availdables." + "</td>"
+                body += "</tr> </tbody>"
+                $('#job-table').append(body)
+            }
+        });
+
+        $(document).on('click', '.job-destroy', function (e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            Swal.fire({
+                title: 'Xóa job này?',
+                text: "Bạn không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Vẫn xóa!',
+            })
+                .then((result) => {
+                    if (result.value) {
+                        $.post("/job/delete", { id: id }, function (data) {
+                            console.log(data);
+                            window.location = "/job"
+                        })
+                    }
+                });
+        });
+    });
+</script>
+{% endblock %}

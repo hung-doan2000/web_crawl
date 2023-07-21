@@ -1,0 +1,64 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link">
+        <span class="brand-text font-weight-light">PROJECT 3</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3">
+            <div class="d-flex user-panel" style="border-bottom: none">
+                <div class="image d-flex align-items-center">
+                    <img src="{{url_for('static', filename = 'images/avatar.png')}}"
+                        class="img-circle elevation-2 d-block" alt="User Image'">
+                </div>
+                <div class="info">
+                    <a href="" class="d-block font-weight-bold" style="font-size: 1.1rem">Admin</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+                <li class="nav-item has-treeview">
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="far fas fa-spider nav-icon"></i>
+                        <p>
+                            Crawl Dữ Liệu   
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/tool" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Quản lý Tool</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="/job" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Cài đặt tự động</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+</aside>
